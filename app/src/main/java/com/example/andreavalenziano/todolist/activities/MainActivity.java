@@ -16,6 +16,9 @@ import com.example.andreavalenziano.todolist.adapters.NoteAdapter;
 import com.example.andreavalenziano.todolist.models.Note;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 import static android.content.ContentValues.TAG;
 import static com.example.andreavalenziano.todolist.models.StateType.TODO;
@@ -113,12 +116,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if (requestCode == 1) {
             if(resultCode == Activity.RESULT_OK){
-                System.out.println("ok");
                 String title= data.getStringExtra(TITLE);
                 String dateExp=data.getStringExtra(DATE_EXP);
                 String textBody=data.getStringExtra(TEXT_BODY);
-
-                Note note=new Note(title,textBody,null,null,dateExp,TODO);
+                Calendar dateCr=new GregorianCalendar();
+                String dateCreation= dateCr.toString();
+                Note note=new Note(title,textBody,dateCreation,null,dateExp,TODO);
 
                 adapter.addNote(note);
                 noteRV.scrollToPosition(0);
