@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/main_layout">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/linear_layout_buttons"
+        android:gravity="center">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="@string/to_do"
+            android:backgroundTint="@color/colorPrimaryLight"
+            android:id="@+id/to_do_button"
+            />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="@string/complete"
+            android:backgroundTint="@color/colorPrimaryLight"
+            android:id="@+id/complete_button"/>
+    </LinearLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/create_button"
+        android:src="@drawable/ic_plus"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="@dimen/material_component_floating_action_button_margin"
+        android:layout_alignParentRight="true"
+        />
+
+    <android.support.v7.widget.RecyclerView
+        android:padding="10dp"
+        android:layout_width="match_parent"
+        android:id="@+id/to_do_list_rv"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true" />
+</RelativeLayout>

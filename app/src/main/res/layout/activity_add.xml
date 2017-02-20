@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/material_component_cards_padding_from_edge_of_screen_to_card"
+    >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/title"
+       android:textSize="@dimen/material_typography_title"
+        android:id="@+id/title_tv"
+        />
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/title_et"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/expirationdate"
+        android:textSize="@dimen/material_typography_title"
+        android:id="@+id/expiration_date_tv"
+        />
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/expiration_date_et"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/textbody"
+        android:textSize="@dimen/material_typography_title"
+        android:id="@+id/text_body_tv"
+        />
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/text_body_et"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:text="@string/create"
+        android:backgroundTint="@color/colorPrimaryLight"
+        android:id="@+id/submit_button"
+        android:layout_gravity="end"
+
+        />
+</LinearLayout>
