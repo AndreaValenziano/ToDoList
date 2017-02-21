@@ -37,6 +37,11 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteVH> {
         notifyDataSetChanged();
     }
 
+    public void deleteNote(int index) {
+        dataSet.remove(index);
+        notifyDataSetChanged();
+    }
+
     public void setDataSet(ArrayList<Note> dataSet){
         this.dataSet=dataSet;
         notifyDataSetChanged();
@@ -85,6 +90,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteVH> {
     public int getItemCount() {
         return dataSet.size();
     }
+
 
 
 
