@@ -28,14 +28,25 @@ public class AddActivity extends AppCompatActivity {
         intent=getIntent();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add);
+
+        //toolbar
         setTitle("Create a note");
         Toolbar toolbar=(Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
 
+
         titleTV=(EditText) findViewById(R.id.title_et);
         dateExpTV=(EditText)findViewById(R.id.expiration_date_et);
         textBodyTV=(EditText)findViewById(R.id.text_body_et);
+        if(intent.getBooleanExtra(MainActivity.EDIT,true)){
+            System.out.println("true");
+            titleTV.setText(intent.getStringExtra(MainActivity.TITLE));
+            dateExpTV.setText(intent.getStringExtra(MainActivity.DATE_EXP));
+            textBodyTV.setText(intent.getStringExtra(MainActivity.TEXT_BODY));
+        }
+
+
 
 
 
@@ -70,7 +81,9 @@ public class AddActivity extends AppCompatActivity {
         intent.putExtra(MainActivity.TITLE,title);
         intent.putExtra(MainActivity.DATE_EXP,dateExp);
         intent.putExtra(MainActivity.TEXT_BODY,textBody);
-
+        if(intent.getBooleanExtra(MainActivity.EDIT,true)){
+            intent.putExtra(MainActivity.EDIT,true);
+        }
         setResult(Activity.RESULT_OK,intent);
         finish();
     }

@@ -34,9 +34,11 @@
         android:layout_alignParentBottom="true"
         android:layout_margin="@dimen/material_component_floating_action_button_margin"
         android:layout_alignParentRight="true"
+
         />
 
     <android.support.v7.widget.RecyclerView
+        android:layout_below="@id/linear_layout_buttons"
         android:padding="10dp"
         android:layout_width="match_parent"
         android:id="@+id/to_do_list_rv"

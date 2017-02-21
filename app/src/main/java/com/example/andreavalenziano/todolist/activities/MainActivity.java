@@ -44,6 +44,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static final String DATE_LAST_EDIT ="dataLastEdit";
     public static final String TEXT_BODY="textBody";
     public static final String ID="id";
+    public static final String EDIT="iseditable";
+    
+    //flag
+    public boolean isEditable=false;
 
 
 
@@ -103,6 +107,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         }else if(v.getId()==R.id.create_button){
             Intent intent=new Intent(MainActivity.this,AddActivity.class);
+            isEditable=false;
+            intent.putExtra(EDIT, isEditable);
 
             Activity context=(Activity) v.getContext();
             context.startActivityForResult(intent,MainActivity.ADD_REQUEST_CODE);
@@ -119,11 +125,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 String title= data.getStringExtra(TITLE);
                 String dateExp=data.getStringExtra(DATE_EXP);
                 String textBody=data.getStringExtra(TEXT_BODY);
+                int index=data.getIntExtra(ID,0);
                 Calendar dateCr=new GregorianCalendar();
                 String dateCreation= dateCr.toString();
                 Note note=new Note(title,textBody,dateCreation,null,dateExp,TODO);
+                if(data.getBooleanExtra(MainActivity.EDIT,true)){
+                    adapter.modifyNote(note,index);
+                }else{
+                    adapter.addNote(note);
+                }
 
-                adapter.addNote(note);
+
                 noteRV.scrollToPosition(0);
 
 
