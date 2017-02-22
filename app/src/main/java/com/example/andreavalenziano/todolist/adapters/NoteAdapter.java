@@ -109,8 +109,9 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteVH> {
         return dataSet.size();
     }
 
-
-
+    public Note getNote(int position) {
+        return dataSet.get(position);
+    }
 
     public class NoteVH extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener{
         TextView titleTV, expDateTV, lastEditDateTV,textBodyTV;

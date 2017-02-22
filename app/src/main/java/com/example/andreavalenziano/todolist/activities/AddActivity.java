@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.andreavalenziano.todolist.R;
@@ -29,6 +30,8 @@ public class AddActivity extends AppCompatActivity {
 
 
     EditText titleET, textBodyET, dateExpET;
+    TextView dateExpTV;
+    ImageButton calendar_button;
 
     Intent intent;
     private SimpleDateFormat dateFormatter;
@@ -51,17 +54,19 @@ public class AddActivity extends AppCompatActivity {
 
 
         titleET = (EditText) findViewById(R.id.title_et);
-        dateExpET = (EditText) findViewById(R.id.expiration_date_et);
+        dateExpTV = (TextView) findViewById(R.id.expiration_date_tv);
         textBodyET = (EditText) findViewById(R.id.text_body_et);
+        calendar_button=(ImageButton) findViewById(R.id.calendar_button);
+
 
 
         if (intent.getBooleanExtra(MainActivity.EDIT, true)) {
             setTitle("Edit note");
             titleET.setText(intent.getStringExtra(MainActivity.TITLE));
-            dateExpET.setText(intent.getStringExtra(MainActivity.DATE_EXP));
+            dateExpTV.setText(intent.getStringExtra(MainActivity.DATE_EXP));
             textBodyET.setText(intent.getStringExtra(MainActivity.TEXT_BODY));
         }
-        dateExpET.setOnClickListener(new View.OnClickListener() {
+        calendar_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Calendar c = Calendar.getInstance();
@@ -74,11 +79,12 @@ public class AddActivity extends AppCompatActivity {
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                         String date=dayOfMonth+"-"+(month+1)+"-"+year;
                         System.out.println(date);
-                        dateExpET.setText(date);
+
+                        dateExpTV.setText(date);
                     }
                 },startYear, startMonth, startDay);
 
-                datePickerDialog.setTitle("calendar");
+                datePickerDialog.setTitle("Calendar");
                 datePickerDialog.show();
             }
         });
@@ -118,7 +124,7 @@ public class AddActivity extends AppCompatActivity {
     public void newNote(){
 
         String title= titleET.getText().toString();
-        String dateExp= dateExpET.getText().toString();
+        String dateExp= dateExpTV.getText().toString();
         String textBody= textBodyET.getText().toString();
 
         intent.putExtra(MainActivity.TITLE,title);

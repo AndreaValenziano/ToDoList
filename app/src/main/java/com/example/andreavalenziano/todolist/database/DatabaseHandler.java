@@ -135,7 +135,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      * DELETE
      */
     // Deleting single note
-    public void deletNote(Note note) {
+    public void deleteNote(Note note) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_NOTES, KEY_ID + " = ?",
                 new String[]{String.valueOf(note.getId())});

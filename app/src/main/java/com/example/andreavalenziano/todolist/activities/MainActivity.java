@@ -12,7 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-
+import android.view.MenuItem;
 import com.example.andreavalenziano.todolist.R;
 import com.example.andreavalenziano.todolist.adapters.NoteAdapter;
 import com.example.andreavalenziano.todolist.database.DatabaseHandler;
@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Button toDoBtn;
     Button completeBtn;
     FloatingActionButton addBtn;
+    Note editingNote;
     private RecyclerView noteRV;
     private RecyclerView.LayoutManager layoutManager;
     private NoteAdapter adapter;
@@ -68,16 +69,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setSupportActionBar(toolbar);
         //getSupportActionBar().setTitle("Home");
 
+
+
+
         toDoBtn = (Button) findViewById(R.id.to_do_button);
         completeBtn = (Button) findViewById(R.id.complete_button);
         addBtn = (FloatingActionButton) findViewById(R.id.create_button);
 
         noteRV = (RecyclerView) findViewById(R.id.to_do_list_rv);
-        adapter = new NoteAdapter();
+        adapter = new NoteAdapter(this);
         layoutManager = new LinearLayoutManager(this);
         noteRV.setLayoutManager(layoutManager);
         noteRV.setAdapter(adapter);
-        adapter.setDataSet(getNoteRV());
+        registerForContextMenu(noteRV);
 
         toDoBtn.setOnClickListener(this);
         completeBtn.setOnClickListener(this);
@@ -89,30 +93,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    private ArrayList<Note> getNoteRV() {
-        ArrayList<Note> notes = new ArrayList<>();
-        Note firstNote = new Note("TITLE",
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean mollis massa quis elit tincidunt dignissim. Vestibulum mollis sapien eu justo venenatis mattis. Pellentesque sed justo enim. Donec et arcu quis felis molestie volutpat sit amet non est. Praesent vehicula facilisis velit, ut aliquam ex pulvinar eget. Nulla vestibulum eros ac.\n" +
-                        "\n",
-                "20-02-2017",
-                "",
-                "23-02-2017",
-                TODO
-        );
-        Note secondNote = new Note("SECOND TITLE",
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean mollis massa quis elit tincidunt dignissim. Vestibulum mollis sapien eu justo venenatis mattis. Pellentesque sed justo enim. Donec et arcu quis felis molestie volutpat sit amet non est. Praesent vehicula facilisis velit, ut aliquam ex pulvinar eget. Nulla vestibulum eros ac.\n" +
-                        "\n",
-                "20-02-2017",
-                "",
-                "23-02-2017",
-                TODO
-        );
 
-        notes.add(firstNote);
-        notes.add(secondNote);
-
-        return notes;
-    }
 
     @Override
     public void onClick(View v) {
@@ -167,9 +148,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             //Write your code if there's no result
         }
 
+
     }
 
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
 
+        int id = item.getItemId();
+        switch (id){
+            case R.id.action_delete:
+                //remove record
+                dbHandler.deleteNote(adapter.getNote(adapter.getPosition()));
+                // remove from adapter
+                adapter.deleteNote(adapter.getPosition());
+                break;
+
+            case R.id.action_edit:
+
+                editingNote = adapter.getNote(adapter.getPosition());
+                Intent i = new Intent(this,AddActivity.class);
+                i.putExtra(EDIT, true);
+                i.putExtra(TITLE,editingNote.getTitle());
+                i.putExtra(TEXT_BODY,editingNote.getTextBody());
+                startActivityForResult(i,EDIT_REQUEST_CODE);
+                break;
+
+        }
+
+        return super.onContextItemSelected(item);
+    }
 
 
 

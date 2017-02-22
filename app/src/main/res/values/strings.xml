@@ -3,8 +3,10 @@
     <string name="to_do">To do</string>
     <string name="title">Title</string>
 <string name="complete">Complete</string>
-    <string name="expirationdate">Expiration Date</string>
+    <string name="when">When?  </string>
     <string name="textbody">Text</string>
     <string name="create">Create</string>
     <string name="last_edit_date">Last edit date</string>
+    <string name="action_edit">Edit</string>
+    <string name="delete">Delete</string>
 </resources>
