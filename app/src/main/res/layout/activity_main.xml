@@ -3,7 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/main_layout">
+
+    <include layout="@layout/toolbar"
+        android:id="@+id/toolbar_main">
+
+    </include>
     <LinearLayout
+        android:layout_below="@id/toolbar_main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/linear_layout_buttons"

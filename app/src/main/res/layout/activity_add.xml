@@ -47,15 +47,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/text_body_et"/>
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:text="@string/expirationdate"
-            android:backgroundTint="@color/colorPrimaryLight"
-            android:id="@+id/date_picker_button"
-            android:layout_gravity="center"
-            />
+
 
     </LinearLayout>
 </LinearLayout>
