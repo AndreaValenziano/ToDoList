@@ -72,7 +72,7 @@ public class AddActivity extends AppCompatActivity {
                 DatePickerDialog datePickerDialog=new DatePickerDialog(AddActivity.this, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                        String date=dayOfMonth+"-"+month+"-"+year;
+                        String date=dayOfMonth+"-"+(month+1)+"-"+year;
                         System.out.println(date);
                         dateExpET.setText(date);
                     }

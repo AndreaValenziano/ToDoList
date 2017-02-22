@@ -3,6 +3,9 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="@dimen/material_component_cards_padding_from_edge_of_screen_to_card"
+    android:background="@color/colorPrimaryLight"
+
+    android:layout_marginBottom="@dimen/material_component_cards_padding_from_edge_of_screen_to_card"
     >
 
     <TextView

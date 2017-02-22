@@ -15,6 +15,7 @@ import android.widget.Button;
 
 import com.example.andreavalenziano.todolist.R;
 import com.example.andreavalenziano.todolist.adapters.NoteAdapter;
+import com.example.andreavalenziano.todolist.database.DatabaseHandler;
 import com.example.andreavalenziano.todolist.models.Note;
 
 import java.util.ArrayList;
@@ -37,9 +38,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private RecyclerView.LayoutManager layoutManager;
     private NoteAdapter adapter;
 
+    DatabaseHandler dbHandler;
+
 
     //constants
     public static final int ADD_REQUEST_CODE = 1;
+    public static final int EDIT_REQUEST_CODE = 2;
     public static final String TITLE = "title";
     public static final String DATE_EXP = "dataExp";
     public static final String DATE_CR = "dataCr";
@@ -62,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setTitle("Home");
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        //getSupportActionBar().setTitle("Home");
 
         toDoBtn = (Button) findViewById(R.id.to_do_button);
         completeBtn = (Button) findViewById(R.id.complete_button);
@@ -77,6 +82,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         toDoBtn.setOnClickListener(this);
         completeBtn.setOnClickListener(this);
         addBtn.setOnClickListener(this);
+
+       dbHandler = new DatabaseHandler(this);
+        adapter.setDataSet(dbHandler.getAllNotes());
 
 
     }
@@ -108,11 +116,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
+
         if (v.getId() == R.id.to_do_button) {
 
         } else if (v.getId() == R.id.complete_button) {
 
         } else if (v.getId() == R.id.create_button) {
+
             Intent intent = new Intent(MainActivity.this, AddActivity.class);
             isEditable = false;
             intent.putExtra(EDIT, isEditable);
@@ -127,32 +137,44 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 1) {
-            if (resultCode == Activity.RESULT_OK) {
-                String title = data.getStringExtra(TITLE);
-                String dateExp = data.getStringExtra(DATE_EXP);
-                String textBody = data.getStringExtra(TEXT_BODY);
-                int index = data.getIntExtra(ID, 0);
-                Calendar dateCr = new GregorianCalendar();
-                String dateCreation = dateCr.toString();
-                Note note = new Note(title, textBody, dateCreation, null, dateExp, TODO);
-                 if (data.getBooleanExtra(MainActivity.EDIT, true)) {
+        Note note;
+        if (requestCode == ADD_REQUEST_CODE && resultCode == Activity.RESULT_OK) { //modificare if con codice EDIT_REQUEST_CODE
 
-                    adapter.modifyNote(note, index);
-                }else{
-                    adapter.addNote(note);
-                }
-
-            noteRV.scrollToPosition(0);
-
-
+            String title = data.getStringExtra(TITLE);
+            String dateExp = data.getStringExtra(DATE_EXP);
+            String textBody = data.getStringExtra(TEXT_BODY);
+            Calendar dateCr = new GregorianCalendar();
+            String dateCreation = dateCr.toString();
+            note = new Note(title, textBody, dateExp, dateCreation, null, TODO);
+            adapter.addNote(note);
+            dbHandler.addNote(note);
         }
+        if (requestCode == EDIT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            String title = data.getStringExtra(TITLE);
+            String dateExp = data.getStringExtra(DATE_EXP);
+            String textBody = data.getStringExtra(TEXT_BODY);
+            Calendar dateCr = new GregorianCalendar();
+            String dateCreation = dateCr.toString();
+            int index=data.getIntExtra(ID,0);
+            note = new Note(title, textBody, dateExp, dateCreation, null, TODO);
+            adapter.modifyNote(note, index);
+            dbHandler.updateNote(note);
+        }
+        noteRV.scrollToPosition(0);
+
+
         if (resultCode == Activity.RESULT_CANCELED) {
             //Write your code if there's no result
         }
+
     }
 
-}
+
+
+
+
+
+
 
     @Override
     protected void onResume() {

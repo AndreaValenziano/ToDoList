@@ -5,19 +5,32 @@ package com.example.andreavalenziano.todolist.models;
  */
 
 public class Note {
+    private int id;
     private String title;
     private String textBody;
     private String DateCreation, DateLastEdit, DateExpired;
     private StateType state;
 
 
-    public Note(String title, String textBody, String dateCreation, String dateLastEdit, String dateExpired, StateType state) {
+    public Note(String title, String textBody, String dateExpired, String dateCreation, String dateLastEdit, StateType state) {
         this.title = title;
         this.textBody = textBody;
         DateCreation = dateCreation;
         DateLastEdit = dateLastEdit;
         DateExpired = dateExpired;
         this.state = state;
+    }
+
+    public Note() {
+
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getTitle() {

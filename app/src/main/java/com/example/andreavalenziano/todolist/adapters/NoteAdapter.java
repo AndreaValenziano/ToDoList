@@ -1,9 +1,12 @@
 package com.example.andreavalenziano.todolist.adapters;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -22,9 +25,20 @@ import java.util.ArrayList;
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteVH> {
 
     private ArrayList<Note> dataSet=new ArrayList<>();
-    private static NoteAdapter instance=new NoteAdapter();
-    public static NoteAdapter getInstance(){
-        return instance;
+    private int position;
+    private Context context;
+
+    public NoteAdapter() {
+
+    }
+
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
     }
 
     public void addNote(Note note){
@@ -47,6 +61,10 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteVH> {
         notifyDataSetChanged();
     }
 
+    public NoteAdapter(Context c) {
+        context = c;
+    }
+
     public ArrayList<Note> getDataSet(){
         return dataSet;
     }
@@ -60,7 +78,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteVH> {
     }
 
     @Override
-    public void onBindViewHolder(NoteAdapter.NoteVH holder, final int position) {
+    public void onBindViewHolder(NoteAdapter.NoteVH holder,  final int position) {
 
         Note note = dataSet.get(position);
         holder.titleTV.setText(note.getTitle());
@@ -78,7 +96,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteVH> {
                 i.putExtra(MainActivity.TEXT_BODY,note.getTextBody());
                 i.putExtra(MainActivity.ID,position);
                 Activity context=(Activity) v.getContext();
-                context.startActivityForResult(i,MainActivity.ADD_REQUEST_CODE);
+                context.startActivityForResult(i,MainActivity.EDIT_REQUEST_CODE);
             }
         });
 
@@ -94,7 +112,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteVH> {
 
 
 
-    public class NoteVH extends RecyclerView.ViewHolder{
+    public class NoteVH extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener{
         TextView titleTV, expDateTV, lastEditDateTV,textBodyTV;
 
         public NoteVH(View itemView) {
@@ -103,12 +121,27 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteVH> {
             expDateTV=(TextView)itemView.findViewById(R.id.exp_date_note_tv);
             lastEditDateTV=(TextView)itemView.findViewById(R.id.last_edit_daet_note_tv);
             textBodyTV=(TextView)itemView.findViewById(R.id.text_body_note_tv);
+            itemView.setOnCreateContextMenuListener(this);
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    setPosition(getAdapterPosition());
+                    return false;
+                }
+            });
+        }
+
+        @Override
+        public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
+            MenuInflater inflater = ((MainActivity)context).getMenuInflater();
+            inflater.inflate(R.menu.menu_note, contextMenu);
+        }
 
 
 
         }
 
 
-    }
+
 
 }
