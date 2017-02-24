@@ -6,7 +6,11 @@
     <string name="when">When?  </string>
     <string name="textbody">Text</string>
     <string name="create">Create</string>
-    <string name="last_edit_date">Last edit date</string>
+    <string name="last_edit_date">Last edit: </string>
     <string name="action_edit">Edit</string>
     <string name="delete">Delete</string>
+    <string name="adding_success">Note has been created successfuly</string>
+    <string name="database_error">Database error!</string>
+    <string name="updating_success">This note has been uptaded successfully</string>
+    <string name="deleting_success">This note has been deleted successfully</string>
 </resources>

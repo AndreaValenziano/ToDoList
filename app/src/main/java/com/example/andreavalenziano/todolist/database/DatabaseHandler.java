@@ -1,11 +1,15 @@
 package com.example.andreavalenziano.todolist.database;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.nfc.Tag;
+import android.util.Log;
 
+import com.example.andreavalenziano.todolist.activities.MainActivity;
 import com.example.andreavalenziano.todolist.models.Note;
 import com.example.andreavalenziano.todolist.models.StateType;
 
@@ -29,7 +33,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     // All Static variables
     // Database Version
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 3;
 
     // Database Name
     private static final String DATABASE_NAME = "notes";
@@ -67,7 +71,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     /**
      * CREATE
      */
-    public void addNote(Note note) {
+    public int addNote(Note note) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -79,8 +83,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(KEY_STATE, note.getState().toString());
 
         // Inserting Row
-        db.insert(TABLE_NOTES, null, values);
+        note.setId((int)db.insert(TABLE_NOTES, null, values));
         db.close(); // Closing database connection
+        return note.getId();
     }
 
     /**
@@ -91,6 +96,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         ArrayList<Note> notesList = new ArrayList<>();
         // Select All Query
         String selectQuery = "SELECT  * FROM " + TABLE_NOTES;
+        Log.d(ContentValues.TAG, "GET ALL NOTES");
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -105,11 +111,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 note.setDateExpired(cursor.getString(3));
                 note.setDateCreation(cursor.getString(4));
                 note.setDateLastEdit(cursor.getString(5));
+                Log.d(ContentValues.TAG,"CREATION: "+note.getDateCreation());
+                Log.d(ContentValues.TAG,"LAST EDIT: "+note.getDateLastEdit());
                 note.setState(StateType.TODO); //???how can I convert String to ENUM????
                 // Adding note to list
-                notesList.add(note);
+                notesList.add(0,note);
             } while (cursor.moveToNext());
         }
+        db.close();
 
         // return notes list
         return notesList;
@@ -125,9 +134,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(KEY_TITLE, note.getTitle());
         values.put(KEY_BODY, note.getTextBody());
+        values.put(KEY_DATA_EXP,note.getDateExpired());
+        values.put(KEY_DATA_EDIT,note.getDateLastEdit());
         // updating row
-        return db.update(TABLE_NOTES, values, KEY_ID + " = ?",
+        int up= db.update(TABLE_NOTES, values, KEY_ID + " = ?",
                 new String[]{String.valueOf(note.getId())});
+        Log.d(ContentValues.TAG,"ID TO UPDATE: "+note.getId());
+        db.close();
+        return up;
     }
 
 
@@ -135,10 +149,21 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      * DELETE
      */
     // Deleting single note
-    public void deleteNote(Note note) {
+    public int deleteNote(Note note) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_NOTES, KEY_ID + " = ?",
+        Log.d(ContentValues.TAG,"ID TO DELETE: "+note.getId());
+
+        int del=db.delete(TABLE_NOTES, KEY_ID + " = ?",
                 new String[]{String.valueOf(note.getId())});
         db.close();
+
+
+        return del;
+    }
+
+    public void dropDatabase(){
+        System.out.println("DROPPING");
+        SQLiteDatabase db=this.getWritableDatabase();
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NOTES);
     }
 }

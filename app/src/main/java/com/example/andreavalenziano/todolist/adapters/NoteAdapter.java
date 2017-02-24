@@ -47,12 +47,12 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteVH> {
     }
 
     public void modifyNote(Note note, int index) {
-        dataSet.set(index,note);
+        dataSet.set(index,getNote(index));
         notifyDataSetChanged();
     }
 
     public void deleteNote(int index) {
-        dataSet.remove(index);
+        dataSet.remove(getNote(index));
         notifyDataSetChanged();
     }
 
@@ -85,20 +85,6 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteVH> {
         holder.expDateTV.setText(note.getDateExpired());
         holder.lastEditDateTV.setText(note.getDateLastEdit());
         holder.textBodyTV.setText(note.getTextBody());
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Note note=dataSet.get(position);
-                Intent i=new Intent(v.getContext(), AddActivity.class);
-                i.putExtra(MainActivity.EDIT,true);
-                i.putExtra(MainActivity.TITLE,note.getTitle());
-                i.putExtra(MainActivity.DATE_EXP,note.getDateExpired());
-                i.putExtra(MainActivity.TEXT_BODY,note.getTextBody());
-                i.putExtra(MainActivity.ID,position);
-                Activity context=(Activity) v.getContext();
-                context.startActivityForResult(i,MainActivity.EDIT_REQUEST_CODE);
-            }
-        });
 
 
 

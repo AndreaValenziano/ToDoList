@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,11 +15,15 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.view.MenuItem;
+import android.widget.RelativeLayout;
+
 import com.example.andreavalenziano.todolist.R;
 import com.example.andreavalenziano.todolist.adapters.NoteAdapter;
 import com.example.andreavalenziano.todolist.database.DatabaseHandler;
 import com.example.andreavalenziano.todolist.models.Note;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -37,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Note editingNote;
     private RecyclerView noteRV;
     private RecyclerView.LayoutManager layoutManager;
+    private static RelativeLayout relativeLayout;
     private NoteAdapter adapter;
 
     DatabaseHandler dbHandler;
@@ -53,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static final String ID = "id";
     public static final String EDIT = "iseditable";
     public static final String DELETED = "isdeleted";
+    public Snackbar snackbar;
 
     //flag
     public boolean isEditable = false;
@@ -83,6 +91,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         noteRV.setAdapter(adapter);
         registerForContextMenu(noteRV);
 
+        relativeLayout= (RelativeLayout) findViewById(R.id.main_layout);
+
         toDoBtn.setOnClickListener(this);
         completeBtn.setOnClickListener(this);
         addBtn.setOnClickListener(this);
@@ -101,6 +111,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (v.getId() == R.id.to_do_button) {
 
         } else if (v.getId() == R.id.complete_button) {
+            dbHandler.dropDatabase();
 
         } else if (v.getId() == R.id.create_button) {
 
@@ -125,21 +136,44 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             String dateExp = data.getStringExtra(DATE_EXP);
             String textBody = data.getStringExtra(TEXT_BODY);
             Calendar dateCr = new GregorianCalendar();
-            String dateCreation = dateCr.toString();
-            note = new Note(title, textBody, dateExp, dateCreation, null, TODO);
+            SimpleDateFormat sDF=new SimpleDateFormat();
+            String dateCreation =sDF.format(dateCr.getTime());
+            note = new Note(title, textBody, dateExp, dateCreation, dateCreation, TODO);
             adapter.addNote(note);
+
             dbHandler.addNote(note);
+            if(note.getId()>-1){
+                 snackbar= Snackbar.make(relativeLayout, R.string.adding_success, Snackbar.LENGTH_SHORT);
+            }else
+            {
+                snackbar= Snackbar.make(relativeLayout, R.string.database_error, Snackbar.LENGTH_SHORT);
+            }
+            snackbar.show();
         }
         if (requestCode == EDIT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+
             String title = data.getStringExtra(TITLE);
             String dateExp = data.getStringExtra(DATE_EXP);
             String textBody = data.getStringExtra(TEXT_BODY);
-            Calendar dateCr = new GregorianCalendar();
-            String dateCreation = dateCr.toString();
+           Calendar dateLE = new GregorianCalendar();
+            SimpleDateFormat sDF=new SimpleDateFormat();
+            String dateLastEdit =sDF.format(dateLE.getTime());
+
             int index=data.getIntExtra(ID,0);
-            note = new Note(title, textBody, dateExp, dateCreation, null, TODO);
-            adapter.modifyNote(note, index);
-            dbHandler.updateNote(note);
+            editingNote.setTitle(title);
+            editingNote.setDateLastEdit(dateLastEdit);
+            editingNote.setTextBody(textBody);
+            editingNote.setDateExpired(dateExp);
+
+            if( dbHandler.updateNote(editingNote)>0){
+                snackbar= Snackbar.make(relativeLayout, R.string.updating_success, Snackbar.LENGTH_SHORT);
+                adapter.modifyNote(editingNote, index);
+            }else
+            {
+                snackbar= Snackbar.make(relativeLayout, R.string.database_error, Snackbar.LENGTH_SHORT);
+            }
+            snackbar.show();
+
         }
         noteRV.scrollToPosition(0);
 
@@ -155,12 +189,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onContextItemSelected(MenuItem item) {
 
         int id = item.getItemId();
+        Note deletingNote=adapter.getNote(adapter.getPosition());
         switch (id){
             case R.id.action_delete:
                 //remove record
-                dbHandler.deleteNote(adapter.getNote(adapter.getPosition()));
+
+                if(dbHandler.deleteNote(deletingNote)>0){
+                    snackbar= Snackbar.make(relativeLayout, R.string.deleting_success, Snackbar.LENGTH_SHORT);
+                    adapter.deleteNote(adapter.getPosition());
+                }else
+                {
+                    snackbar= Snackbar.make(relativeLayout, R.string.database_error, Snackbar.LENGTH_SHORT);
+                }
+                snackbar.show();
                 // remove from adapter
-                adapter.deleteNote(adapter.getPosition());
+
                 break;
 
             case R.id.action_edit:
@@ -170,6 +213,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 i.putExtra(EDIT, true);
                 i.putExtra(TITLE,editingNote.getTitle());
                 i.putExtra(TEXT_BODY,editingNote.getTextBody());
+                i.putExtra(DATE_EXP,editingNote.getDateExpired());
                 startActivityForResult(i,EDIT_REQUEST_CODE);
                 break;
 

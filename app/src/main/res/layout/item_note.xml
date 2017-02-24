@@ -14,7 +14,30 @@
         android:text="@string/title"
         android:textSize="@dimen/material_typography_title"
         android:id="@+id/title_note_tv"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/linear_layout_info_dates"
+        android:paddingBottom="@dimen/material_component_cards_padding_from_edge_of_screen_to_card"
+        android:paddingTop="@dimen/material_component_cards_padding_from_edge_of_screen_to_card"
 
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/when"
+            android:id="@+id/when_tv"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/last_edit_date"
+            android:id="@+id/last_edit_tv"
+            android:gravity="end"
+            />
+
+
+    </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

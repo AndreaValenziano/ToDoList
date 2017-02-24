@@ -5,6 +5,7 @@ package com.example.andreavalenziano.todolist.models;
  */
 
 public class Note {
+    private static int totNote;
     private int id;
     private String title;
     private String textBody;
@@ -13,15 +14,22 @@ public class Note {
 
 
     public Note(String title, String textBody, String dateExpired, String dateCreation, String dateLastEdit, StateType state) {
+
         this.title = title;
         this.textBody = textBody;
         DateCreation = dateCreation;
         DateLastEdit = dateLastEdit;
         DateExpired = dateExpired;
         this.state = state;
+
+
+
+
     }
 
     public Note() {
+
+
 
     }
 
