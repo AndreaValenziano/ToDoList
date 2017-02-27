@@ -39,7 +39,7 @@ public class AddActivity extends AppCompatActivity {
     private DatePickerDialog fromDatePickerDialog;
 
     @Override
-    protected void onCreate( Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         intent = getIntent();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add);
@@ -52,25 +52,22 @@ public class AddActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDefaultDisplayHomeAsUpEnabled(true);
-
-
+        actionBar.setTitle("Create a note");
 
 
         titleET = (EditText) findViewById(R.id.title_et);
         dateExpTV = (TextView) findViewById(R.id.expiration_date_tv);
         textBodyET = (EditText) findViewById(R.id.text_body_et);
-        starIcon=(ImageView)findViewById(R.id.star_off_add);
+        starIcon = (ImageView) findViewById(R.id.star_off_add);
 
-        calendar_button=(ImageButton) findViewById(R.id.calendar_button);
-
+        calendar_button = (ImageButton) findViewById(R.id.calendar_button);
 
 
         if (intent.getBooleanExtra(MainActivity.EDIT, true)) {
-            setTitle("Edit note");
+            actionBar.setTitle("Edit note");
             titleET.setText(intent.getStringExtra(MainActivity.TITLE));
             dateExpTV.setText(intent.getStringExtra(MainActivity.DATE_EXP));
             textBodyET.setText(intent.getStringExtra(MainActivity.TEXT_BODY));
-
 
 
         }
@@ -82,15 +79,15 @@ public class AddActivity extends AppCompatActivity {
                 int startMonth = c.get(Calendar.MONTH);
                 int startDay = c.get(Calendar.DAY_OF_MONTH);
 
-                DatePickerDialog datePickerDialog=new DatePickerDialog(AddActivity.this, new DatePickerDialog.OnDateSetListener() {
+                DatePickerDialog datePickerDialog = new DatePickerDialog(AddActivity.this, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                        String date=dayOfMonth+"-"+(month+1)+"-"+year;
+                        String date = dayOfMonth + "-" + (month + 1) + "-" + year;
                         System.out.println(date);
 
                         dateExpTV.setText(date);
                     }
-                },startYear, startMonth, startDay);
+                }, startYear, startMonth, startDay);
 
                 datePickerDialog.setTitle("Calendar");
                 datePickerDialog.show();
@@ -102,20 +99,19 @@ public class AddActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_add, menu);
-       MenuItem item= menu.findItem(R.id.star_off_add);
+        MenuItem item = menu.findItem(R.id.star_off_add);
 
-        if(intent.getBooleanExtra(MainActivity.SPECIAL,true)){
+        if (intent.getBooleanExtra(MainActivity.SPECIAL, false)) {
             item.setIcon(R.drawable.ic_star_on);
-            isSpecial=true;
-        }
-        else
-        {
+            isSpecial = true;
+        } else {
             item.setIcon(R.drawable.ic_star_off);
-            isSpecial=false;
+            isSpecial = false;
         }
 
         return true;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
@@ -138,12 +134,10 @@ public class AddActivity extends AppCompatActivity {
     }
 
     private void setSpecial(MenuItem item) {
-        isSpecial=!isSpecial;
-        if(isSpecial){
+        isSpecial = !isSpecial;
+        if (isSpecial) {
             item.setIcon(R.drawable.ic_star_on);
-        }
-        else
-        {
+        } else {
             item.setIcon(R.drawable.ic_star_off);
         }
 
@@ -152,28 +146,27 @@ public class AddActivity extends AppCompatActivity {
     private void deleteNote() {
 
 
-        intent.putExtra(MainActivity.DELETED,true);
-        setResult(Activity.RESULT_OK,intent);
+        intent.putExtra(MainActivity.DELETED, true);
+        setResult(Activity.RESULT_OK, intent);
 
     }
 
-    public void newNote(){
+    public void newNote() {
 
-        String title= titleET.getText().toString();
-        String dateExp= dateExpTV.getText().toString();
-        String textBody= textBodyET.getText().toString();
+        String title = titleET.getText().toString();
+        String dateExp = dateExpTV.getText().toString();
+        String textBody = textBodyET.getText().toString();
 
-        intent.putExtra(MainActivity.TITLE,title);
-        intent.putExtra(MainActivity.DATE_EXP,dateExp);
-        intent.putExtra(MainActivity.TEXT_BODY,textBody);
-        intent.putExtra(MainActivity.SPECIAL,isSpecial);
-        if(intent.getBooleanExtra(MainActivity.EDIT,true)){
-            intent.putExtra(MainActivity.EDIT,true);
+        intent.putExtra(MainActivity.TITLE, title);
+        intent.putExtra(MainActivity.DATE_EXP, dateExp);
+        intent.putExtra(MainActivity.TEXT_BODY, textBody);
+        intent.putExtra(MainActivity.SPECIAL, isSpecial);
+        if (intent.getBooleanExtra(MainActivity.EDIT, true)) {
+            intent.putExtra(MainActivity.EDIT, true);
         }
-        setResult(Activity.RESULT_OK,intent);
+        setResult(Activity.RESULT_OK, intent);
         finish();
     }
-
 
 
 }

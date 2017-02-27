@@ -1,16 +1,20 @@
 package com.example.andreavalenziano.todolist.activities;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
-import android.media.Image;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.widget.Button;
 import android.view.MenuItem;
@@ -33,7 +37,7 @@ import static com.example.andreavalenziano.todolist.models.StateType.TODO;
  * Created by AndreaValenziano on 20/02/17.
  */
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener{
     Button toDoBtn;
     Button completeBtn;
     FloatingActionButton addBtn;
@@ -41,10 +45,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     ImageView starIcon;
     private RecyclerView noteRV;
     private RecyclerView.LayoutManager layoutManager;
+
     private static RelativeLayout relativeLayout;
     private NoteAdapter adapter;
 
     DatabaseHandler dbHandler;
+
+
+    private int STAGGERED_LAYOUT = 20;
+    private int LINEAR_LAYOUT = 21;
+    private int layoutManagerType = LINEAR_LAYOUT;
 
 
     //constants
@@ -58,7 +68,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static final String ID = "id";
     public static final String EDIT = "iseditable";
     public static final String DELETED = "isdeleted";
-    public static final String SPECIAL= "special";
+    public static final String SPECIAL = "special";
+    private static final String LAYOUT_MANAGER_KEY = "LAYOUT_MANAGER_KEY";
     public Snackbar snackbar;
 
     //flag
@@ -71,39 +82,83 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
         //toolbar
-        setTitle("Home");
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main);
         setSupportActionBar(toolbar);
-        //getSupportActionBar().setTitle("Home");
-
-
+        getSupportActionBar().setTitle(R.string.home);
 
 
         toDoBtn = (Button) findViewById(R.id.to_do_button);
         completeBtn = (Button) findViewById(R.id.complete_button);
         addBtn = (FloatingActionButton) findViewById(R.id.create_button);
 
-        starIcon=(ImageView) findViewById(R.id.star_icon_main);
+        starIcon = (ImageView) findViewById(R.id.star_icon_main);
 
         noteRV = (RecyclerView) findViewById(R.id.to_do_list_rv);
         adapter = new NoteAdapter(this);
-        layoutManager = new LinearLayoutManager(this);
+        // layoutManager = new LinearLayoutManager(this);
+        layoutManager = getSavedLayoutManager();
+
         noteRV.setLayoutManager(layoutManager);
         noteRV.setAdapter(adapter);
         registerForContextMenu(noteRV);
 
-        relativeLayout= (RelativeLayout) findViewById(R.id.main_layout);
+        relativeLayout = (RelativeLayout) findViewById(R.id.main_layout);
 
         toDoBtn.setOnClickListener(this);
         completeBtn.setOnClickListener(this);
         addBtn.setOnClickListener(this);
 
-       dbHandler = new DatabaseHandler(this);
+        dbHandler = new DatabaseHandler(this);
         adapter.setDataSet(dbHandler.getAllNotes());
 
 
     }
 
+    private RecyclerView.LayoutManager getSavedLayoutManager() {
+        SharedPreferences sharedPrefs = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        int layoutManager = sharedPrefs.getInt(LAYOUT_MANAGER_KEY, -1);
+        if (layoutManager == STAGGERED_LAYOUT) {
+            setLayoutManagerType(layoutManager);
+            return new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+
+        }
+        if (layoutManager == LINEAR_LAYOUT) {
+            setLayoutManagerType(layoutManager);
+            return new LinearLayoutManager(this);
+        }
+        return new LinearLayoutManager(this);
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_settings) {
+            Log.d("menu", "getLayoutManagerType " + getLayoutManagerType());
+            if (getLayoutManagerType() == STAGGERED_LAYOUT) {
+                setLayoutManagerType(LINEAR_LAYOUT);
+                noteRV.setLayoutManager(new LinearLayoutManager(this));
+                item.setIcon(getDrawable(R.drawable.view_quilt));
+
+
+            } else {
+                setLayoutManagerType(STAGGERED_LAYOUT);
+                noteRV.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+                item.setIcon(getDrawable(R.drawable.view_list));
+
+            }
+
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 
 
     @Override
@@ -137,19 +192,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             String title = data.getStringExtra(TITLE);
             String dateExp = data.getStringExtra(DATE_EXP);
             String textBody = data.getStringExtra(TEXT_BODY);
-            Boolean special= data.getBooleanExtra(SPECIAL,false);
+            Boolean special = data.getBooleanExtra(SPECIAL, false);
             Calendar dateCr = new GregorianCalendar();
-            SimpleDateFormat sDF=new SimpleDateFormat();
-            String dateCreation =sDF.format(dateCr.getTime());
+            SimpleDateFormat sDF = new SimpleDateFormat();
+            String dateCreation = sDF.format(dateCr.getTime());
             note = new Note(title, textBody, dateExp, dateCreation, dateCreation, TODO, special);
             adapter.addNote(note);
 
             dbHandler.addNote(note);
-            if(note.getId()>-1){
-                 snackbar= Snackbar.make(relativeLayout, R.string.adding_success, Snackbar.LENGTH_SHORT);
-            }else
-            {
-                snackbar= Snackbar.make(relativeLayout, R.string.database_error, Snackbar.LENGTH_SHORT);
+            if (note.getId() > -1) {
+                snackbar = Snackbar.make(relativeLayout, R.string.adding_success, Snackbar.LENGTH_SHORT);
+            } else {
+                snackbar = Snackbar.make(relativeLayout, R.string.database_error, Snackbar.LENGTH_SHORT);
             }
             snackbar.show();
         }
@@ -158,24 +212,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             String title = data.getStringExtra(TITLE);
             String dateExp = data.getStringExtra(DATE_EXP);
             String textBody = data.getStringExtra(TEXT_BODY);
-            Boolean isSpecial=data.getBooleanExtra(SPECIAL,false);
-           Calendar dateLE = new GregorianCalendar();
-            SimpleDateFormat sDF=new SimpleDateFormat();
-            String dateLastEdit =sDF.format(dateLE.getTime());
+            Boolean isSpecial = data.getBooleanExtra(SPECIAL, false);
+            Calendar dateLE = new GregorianCalendar();
+            SimpleDateFormat sDF = new SimpleDateFormat();
+            String dateLastEdit = sDF.format(dateLE.getTime());
 
-            int index=data.getIntExtra(ID,0);
+            int index = data.getIntExtra(ID, 0);
             editingNote.setTitle(title);
             editingNote.setDateLastEdit(dateLastEdit);
             editingNote.setTextBody(textBody);
             editingNote.setDateExpired(dateExp);
             editingNote.setSpecial(isSpecial);
 
-            if( dbHandler.updateNote(editingNote)>0){
-                snackbar= Snackbar.make(relativeLayout, R.string.updating_success, Snackbar.LENGTH_SHORT);
+            if (dbHandler.updateNote(editingNote) > 0) {
+                snackbar = Snackbar.make(relativeLayout, R.string.updating_success, Snackbar.LENGTH_SHORT);
                 adapter.updateNote(editingNote, index);
-            }else
-            {
-                snackbar= Snackbar.make(relativeLayout, R.string.database_error, Snackbar.LENGTH_SHORT);
+            } else {
+                snackbar = Snackbar.make(relativeLayout, R.string.database_error, Snackbar.LENGTH_SHORT);
             }
             snackbar.show();
 
@@ -194,17 +247,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onContextItemSelected(MenuItem item) {
 
         int id = item.getItemId();
-        Note deletingNote=adapter.getNote(adapter.getPosition());
-        switch (id){
+        Note deletingNote = adapter.getNote(adapter.getPosition());
+        switch (id) {
             case R.id.action_delete:
                 //remove record
 
-                if(dbHandler.deleteNote(deletingNote)>0){
-                    snackbar= Snackbar.make(relativeLayout, R.string.deleting_success, Snackbar.LENGTH_SHORT);
+                if (dbHandler.deleteNote(deletingNote) > 0) {
+                    snackbar = Snackbar.make(relativeLayout, R.string.deleting_success, Snackbar.LENGTH_SHORT);
                     adapter.deleteNote(adapter.getPosition());
-                }else
-                {
-                    snackbar= Snackbar.make(relativeLayout, R.string.database_error, Snackbar.LENGTH_SHORT);
+                } else {
+                    snackbar = Snackbar.make(relativeLayout, R.string.database_error, Snackbar.LENGTH_SHORT);
                 }
                 snackbar.show();
                 // remove from adapter
@@ -214,13 +266,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.action_edit:
 
                 editingNote = adapter.getNote(adapter.getPosition());
-                Intent i = new Intent(this,AddActivity.class);
+                Intent i = new Intent(this, AddActivity.class);
                 i.putExtra(EDIT, true);
-                i.putExtra(TITLE,editingNote.getTitle());
-                i.putExtra(TEXT_BODY,editingNote.getTextBody());
-                i.putExtra(DATE_EXP,editingNote.getDateExpired());
-                i.putExtra(SPECIAL,editingNote.isSpecial());
-                startActivityForResult(i,EDIT_REQUEST_CODE);
+                i.putExtra(TITLE, editingNote.getTitle());
+                i.putExtra(TEXT_BODY, editingNote.getTextBody());
+                i.putExtra(DATE_EXP, editingNote.getDateExpired());
+                i.putExtra(SPECIAL, editingNote.isSpecial());
+                startActivityForResult(i, EDIT_REQUEST_CODE);
                 break;
 
         }
@@ -229,8 +281,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
+    public int getLayoutManagerType() {
 
+        return layoutManagerType;
+    }
 
+    public void setLayoutManagerType(int layoutManagerType) {
+        this.layoutManagerType = layoutManagerType;
+        Log.d("setLayoutManagerType", "type " + this.layoutManagerType);
+    }
 
 
     @Override
@@ -266,6 +325,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy");
+        SharedPreferences layoutPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = layoutPreferences.edit();
+        editor.putInt(LAYOUT_MANAGER_KEY, getLayoutManagerType());
+        editor.apply();
 
     }
 }
