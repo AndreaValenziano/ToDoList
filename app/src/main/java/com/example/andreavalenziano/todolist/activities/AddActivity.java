@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.andreavalenziano.todolist.R;
@@ -30,6 +31,7 @@ public class AddActivity extends AppCompatActivity {
 
     EditText titleET, textBodyET, dateExpET;
     TextView dateExpTV;
+    ImageView starIcon;
     ImageButton calendar_button;
     boolean isSpecial;
     Intent intent;
@@ -57,6 +59,8 @@ public class AddActivity extends AppCompatActivity {
         titleET = (EditText) findViewById(R.id.title_et);
         dateExpTV = (TextView) findViewById(R.id.expiration_date_tv);
         textBodyET = (EditText) findViewById(R.id.text_body_et);
+        starIcon=(ImageView)findViewById(R.id.star_off_add);
+
         calendar_button=(ImageButton) findViewById(R.id.calendar_button);
 
 
@@ -66,6 +70,9 @@ public class AddActivity extends AppCompatActivity {
             titleET.setText(intent.getStringExtra(MainActivity.TITLE));
             dateExpTV.setText(intent.getStringExtra(MainActivity.DATE_EXP));
             textBodyET.setText(intent.getStringExtra(MainActivity.TEXT_BODY));
+
+
+
         }
         calendar_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,6 +102,18 @@ public class AddActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_add, menu);
+       MenuItem item= menu.findItem(R.id.star_off_add);
+
+        if(intent.getBooleanExtra(MainActivity.SPECIAL,true)){
+            item.setIcon(R.drawable.ic_star_on);
+            isSpecial=true;
+        }
+        else
+        {
+            item.setIcon(R.drawable.ic_star_off);
+            isSpecial=false;
+        }
+
         return true;
     }
     @Override

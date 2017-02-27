@@ -120,6 +120,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             isEditable = false;
             intent.putExtra(EDIT, isEditable);
 
+
             Activity context = (Activity) v.getContext();
             context.startActivityForResult(intent, MainActivity.ADD_REQUEST_CODE);
 
@@ -218,6 +219,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 i.putExtra(TITLE,editingNote.getTitle());
                 i.putExtra(TEXT_BODY,editingNote.getTextBody());
                 i.putExtra(DATE_EXP,editingNote.getDateExpired());
+                i.putExtra(SPECIAL,editingNote.isSpecial());
                 startActivityForResult(i,EDIT_REQUEST_CODE);
                 break;
 
