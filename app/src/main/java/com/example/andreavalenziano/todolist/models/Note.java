@@ -11,9 +11,10 @@ public class Note {
     private String textBody;
     private String DateCreation, DateLastEdit, DateExpired;
     private StateType state;
+    private boolean special;
 
 
-    public Note(String title, String textBody, String dateExpired, String dateCreation, String dateLastEdit, StateType state) {
+    public Note(String title, String textBody, String dateExpired, String dateCreation, String dateLastEdit, StateType state, Boolean special) {
 
         this.title = title;
         this.textBody = textBody;
@@ -21,6 +22,8 @@ public class Note {
         DateLastEdit = dateLastEdit;
         DateExpired = dateExpired;
         this.state = state;
+        this.special=special;
+
 
 
 
@@ -91,5 +94,11 @@ public class Note {
     }
 
 
+    public boolean isSpecial() {
+        return special;
+    }
 
+    public void setSpecial(boolean special) {
+        this.special = special;
+    }
 }

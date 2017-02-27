@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.andreavalenziano.todolist.R;
@@ -46,7 +47,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteVH> {
         notifyItemInserted(0);
     }
 
-    public void modifyNote(Note note, int index) {
+    public void updateNote(Note note, int index) {
         dataSet.set(index,getNote(index));
         notifyDataSetChanged();
     }
@@ -85,6 +86,13 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteVH> {
         holder.expDateTV.setText(note.getDateExpired());
         holder.lastEditDateTV.setText(note.getDateLastEdit());
         holder.textBodyTV.setText(note.getTextBody());
+        if(note.isSpecial()){
+            holder.starIcon.setVisibility(View.VISIBLE);
+        }else
+        {
+            holder.starIcon.setVisibility(View.GONE);
+        }
+
 
 
 
@@ -101,6 +109,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteVH> {
 
     public class NoteVH extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener{
         TextView titleTV, expDateTV, lastEditDateTV,textBodyTV;
+        ImageView starIcon;
 
         public NoteVH(View itemView) {
             super(itemView);
@@ -108,6 +117,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteVH> {
             expDateTV=(TextView)itemView.findViewById(R.id.exp_date_note_tv);
             lastEditDateTV=(TextView)itemView.findViewById(R.id.last_edit_daet_note_tv);
             textBodyTV=(TextView)itemView.findViewById(R.id.text_body_note_tv);
+            starIcon=(ImageView)itemView.findViewById(R.id.star_icon_main);
             itemView.setOnCreateContextMenuListener(this);
             itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override

@@ -14,6 +14,7 @@ import com.example.andreavalenziano.todolist.models.Note;
 import com.example.andreavalenziano.todolist.models.StateType;
 
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by AndreaValenziano on 22/02/17.
@@ -29,11 +30,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String KEY_DATA_CR = "data_cr";
     private static final String KEY_DATA_EDIT = "data_edit";
     private static final String KEY_STATE = "state";
-
+    private static final String KEY_SPECIAL = "special";
 
     // All Static variables
     // Database Version
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 6;
 
     // Database Name
     private static final String DATABASE_NAME = "notes";
@@ -50,7 +51,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         String CREATE_NOTE_TABLE = "CREATE TABLE " + TABLE_NOTES + "("
                 + KEY_ID + " INTEGER PRIMARY KEY," + KEY_TITLE + " TEXT,"
                 + KEY_BODY + " TEXT, " + KEY_DATA_EXP + " TEXT, " + KEY_DATA_CR + " TEXT, "
-                + KEY_DATA_EDIT + " TEXT, " + KEY_STATE + " TEXT" + ")";
+                + KEY_DATA_EDIT + " TEXT, " + KEY_STATE + " TEXT," + KEY_SPECIAL + " INTEGER" +  ")";
         db.execSQL(CREATE_NOTE_TABLE);
 
     }
@@ -81,6 +82,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(KEY_DATA_CR, note.getDateCreation());
         values.put(KEY_DATA_EDIT, note.getDateLastEdit());
         values.put(KEY_STATE, note.getState().toString());
+        if(note.isSpecial()){
+            values.put(KEY_SPECIAL,1);
+        }
+        else{
+            values.put(KEY_SPECIAL,0);
+        }
+
+
 
         // Inserting Row
         note.setId((int)db.insert(TABLE_NOTES, null, values));
@@ -111,8 +120,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 note.setDateExpired(cursor.getString(3));
                 note.setDateCreation(cursor.getString(4));
                 note.setDateLastEdit(cursor.getString(5));
-                Log.d(ContentValues.TAG,"CREATION: "+note.getDateCreation());
-                Log.d(ContentValues.TAG,"LAST EDIT: "+note.getDateLastEdit());
+                //note.setState(cursor.getString(6));
+                if(cursor.getString(7).equals("1")){
+                    note.setSpecial(true);
+                }
+                else if(cursor.getString(7).equals("0"))
+                {
+                    note.setSpecial(false);
+                }
+
                 note.setState(StateType.TODO); //???how can I convert String to ENUM????
                 // Adding note to list
                 notesList.add(0,note);
@@ -136,6 +152,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(KEY_BODY, note.getTextBody());
         values.put(KEY_DATA_EXP,note.getDateExpired());
         values.put(KEY_DATA_EDIT,note.getDateLastEdit());
+        values.put(KEY_SPECIAL,note.isSpecial());
         // updating row
         int up= db.update(TABLE_NOTES, values, KEY_ID + " = ?",
                 new String[]{String.valueOf(note.getId())});
@@ -161,9 +178,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return del;
     }
 
-    public void dropDatabase(){
+   /* public void dropDatabase(){
         System.out.println("DROPPING");
         SQLiteDatabase db=this.getWritableDatabase();
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NOTES);
-    }
+    }*/
 }

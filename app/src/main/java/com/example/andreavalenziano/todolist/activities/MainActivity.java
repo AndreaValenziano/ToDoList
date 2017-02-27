@@ -2,11 +2,10 @@ package com.example.andreavalenziano.todolist.activities;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.example.andreavalenziano.todolist.R;
@@ -22,11 +22,8 @@ import com.example.andreavalenziano.todolist.adapters.NoteAdapter;
 import com.example.andreavalenziano.todolist.database.DatabaseHandler;
 import com.example.andreavalenziano.todolist.models.Note;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 
 import static android.content.ContentValues.TAG;
@@ -41,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Button completeBtn;
     FloatingActionButton addBtn;
     Note editingNote;
+    ImageView starIcon;
     private RecyclerView noteRV;
     private RecyclerView.LayoutManager layoutManager;
     private static RelativeLayout relativeLayout;
@@ -60,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static final String ID = "id";
     public static final String EDIT = "iseditable";
     public static final String DELETED = "isdeleted";
+    public static final String SPECIAL= "special";
     public Snackbar snackbar;
 
     //flag
@@ -83,6 +82,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         toDoBtn = (Button) findViewById(R.id.to_do_button);
         completeBtn = (Button) findViewById(R.id.complete_button);
         addBtn = (FloatingActionButton) findViewById(R.id.create_button);
+
+        starIcon=(ImageView) findViewById(R.id.star_icon_main);
 
         noteRV = (RecyclerView) findViewById(R.id.to_do_list_rv);
         adapter = new NoteAdapter(this);
@@ -111,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (v.getId() == R.id.to_do_button) {
 
         } else if (v.getId() == R.id.complete_button) {
-            dbHandler.dropDatabase();
+
 
         } else if (v.getId() == R.id.create_button) {
 
@@ -135,10 +136,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             String title = data.getStringExtra(TITLE);
             String dateExp = data.getStringExtra(DATE_EXP);
             String textBody = data.getStringExtra(TEXT_BODY);
+            Boolean special= data.getBooleanExtra(SPECIAL,false);
             Calendar dateCr = new GregorianCalendar();
             SimpleDateFormat sDF=new SimpleDateFormat();
             String dateCreation =sDF.format(dateCr.getTime());
-            note = new Note(title, textBody, dateExp, dateCreation, dateCreation, TODO);
+            note = new Note(title, textBody, dateExp, dateCreation, dateCreation, TODO, special);
             adapter.addNote(note);
 
             dbHandler.addNote(note);
@@ -155,6 +157,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             String title = data.getStringExtra(TITLE);
             String dateExp = data.getStringExtra(DATE_EXP);
             String textBody = data.getStringExtra(TEXT_BODY);
+            Boolean isSpecial=data.getBooleanExtra(SPECIAL,false);
            Calendar dateLE = new GregorianCalendar();
             SimpleDateFormat sDF=new SimpleDateFormat();
             String dateLastEdit =sDF.format(dateLE.getTime());
@@ -164,10 +167,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             editingNote.setDateLastEdit(dateLastEdit);
             editingNote.setTextBody(textBody);
             editingNote.setDateExpired(dateExp);
+            editingNote.setSpecial(isSpecial);
 
             if( dbHandler.updateNote(editingNote)>0){
                 snackbar= Snackbar.make(relativeLayout, R.string.updating_success, Snackbar.LENGTH_SHORT);
-                adapter.modifyNote(editingNote, index);
+                adapter.updateNote(editingNote, index);
             }else
             {
                 snackbar= Snackbar.make(relativeLayout, R.string.database_error, Snackbar.LENGTH_SHORT);

@@ -7,7 +7,14 @@
 
     android:layout_marginBottom="@dimen/material_component_cards_padding_from_edge_of_screen_to_card"
     >
-
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:src="@drawable/ic_star_on"
+        android:id="@+id/star_icon_main"
+        android:visibility="gone"
+       />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

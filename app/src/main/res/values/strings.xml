@@ -13,4 +13,5 @@
     <string name="database_error">Database error!</string>
     <string name="updating_success">This note has been uptaded successfully</string>
     <string name="deleting_success">This note has been deleted successfully</string>
+    <string name="special">Special</string>
 </resources>

@@ -11,7 +11,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -32,7 +31,7 @@ public class AddActivity extends AppCompatActivity {
     EditText titleET, textBodyET, dateExpET;
     TextView dateExpTV;
     ImageButton calendar_button;
-
+    boolean isSpecial;
     Intent intent;
     private SimpleDateFormat dateFormatter;
     private DatePickerDialog fromDatePickerDialog;
@@ -51,6 +50,8 @@ public class AddActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDefaultDisplayHomeAsUpEnabled(true);
+
+
 
 
         titleET = (EditText) findViewById(R.id.title_et);
@@ -103,6 +104,10 @@ public class AddActivity extends AppCompatActivity {
             case R.id.check_add:
                 newNote();
                 return true;
+            case R.id.star_off_add:
+                setSpecial(item);
+
+                return true;
             case android.R.id.home:
                 finish();
                 return true;
@@ -111,6 +116,18 @@ public class AddActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void setSpecial(MenuItem item) {
+        isSpecial=!isSpecial;
+        if(isSpecial){
+            item.setIcon(R.drawable.ic_star_on);
+        }
+        else
+        {
+            item.setIcon(R.drawable.ic_star_off);
+        }
+
     }
 
     private void deleteNote() {
@@ -130,6 +147,7 @@ public class AddActivity extends AppCompatActivity {
         intent.putExtra(MainActivity.TITLE,title);
         intent.putExtra(MainActivity.DATE_EXP,dateExp);
         intent.putExtra(MainActivity.TEXT_BODY,textBody);
+        intent.putExtra(MainActivity.SPECIAL,isSpecial);
         if(intent.getBooleanExtra(MainActivity.EDIT,true)){
             intent.putExtra(MainActivity.EDIT,true);
         }
