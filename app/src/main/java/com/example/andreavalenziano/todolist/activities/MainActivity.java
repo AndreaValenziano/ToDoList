@@ -40,6 +40,7 @@ import static com.example.andreavalenziano.todolist.models.StateType.TODO;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
     Button toDoBtn;
     Button completeBtn;
+    Button createSupportBtn;
     FloatingActionButton addBtn;
     Note editingNote;
     ImageView starIcon;
@@ -90,6 +91,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         toDoBtn = (Button) findViewById(R.id.to_do_button);
         completeBtn = (Button) findViewById(R.id.complete_button);
         addBtn = (FloatingActionButton) findViewById(R.id.create_button);
+        createSupportBtn = (Button) findViewById(R.id.create_support_btn);
 
         starIcon = (ImageView) findViewById(R.id.star_icon_main);
 
@@ -107,6 +109,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         toDoBtn.setOnClickListener(this);
         completeBtn.setOnClickListener(this);
         addBtn.setOnClickListener(this);
+        createSupportBtn.setOnClickListener(this);
+
 
         dbHandler = new DatabaseHandler(this);
         adapter.setDataSet(dbHandler.getAllNotes());
@@ -145,13 +149,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (getLayoutManagerType() == STAGGERED_LAYOUT) {
                 setLayoutManagerType(LINEAR_LAYOUT);
                 noteRV.setLayoutManager(new LinearLayoutManager(this));
-                item.setIcon(getDrawable(R.drawable.view_quilt));
+                // item.setIcon(getDrawable(R.drawable.view_quilt));
 
 
             } else {
                 setLayoutManagerType(STAGGERED_LAYOUT);
                 noteRV.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
-                item.setIcon(getDrawable(R.drawable.view_list));
+                // item.setIcon(getDrawable(R.drawable.view_list));
 
             }
 
@@ -176,9 +180,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             intent.putExtra(EDIT, isEditable);
 
 
-            Activity context = (Activity) v.getContext();
-            context.startActivityForResult(intent, MainActivity.ADD_REQUEST_CODE);
+            //Activity context = (Activity) v.getContext();
+            // context.startActivityForResult(intent, MainActivity.ADD_REQUEST_CODE);
+            startActivityForResult(intent, MainActivity.ADD_REQUEST_CODE);
 
+        } else if (v.getId() == R.id.create_support_btn) {
+            Intent intent = new Intent(MainActivity.this, AddActivity.class);
+            isEditable = false;
+            intent.putExtra(EDIT, isEditable);
+
+
+            //Activity context = (Activity) v.getContext();
+            // context.startActivityForResult(intent, MainActivity.ADD_REQUEST_CODE);
+            startActivityForResult(intent, MainActivity.ADD_REQUEST_CODE);
         }
 
 

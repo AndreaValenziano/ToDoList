@@ -44,6 +44,7 @@
 
         />
 
+
     <android.support.v7.widget.RecyclerView
 
         android:layout_below="@id/linear_layout_buttons"
@@ -52,5 +53,13 @@
         android:id="@+id/to_do_list_rv"
         android:layout_height="match_parent"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="@string/create"
+        android:id="@+id/create_support_btn" />
 </RelativeLayout>
